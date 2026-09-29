@@ -3,9 +3,9 @@
 const works = [
   {
     "title": "软件实训 · 智能评价系统",
-    "description": "AI 驱动的实训评价登录页。",
+    "description": "AI 驱动的实训评价系统，查看图文项目介绍。",
     "image": "assets/work-eval.jpg",
-    "url": "https://ffd-p2-blog.netlify.app/"
+    "url": "../eval-system.html"
   },
   {
     "title": "HotspotInsight · 热榜洞察",

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <meta content="软件实训智能评价系统项目介绍：架构、AI 评价引擎、四端功能与部署。" name="description"/>
+  <title>软件实训 · 智能评价系统 | 项目介绍</title>
+  <link href="assets/favicon.svg" rel="icon" type="image/svg+xml"/>
+  <!-- 复用主页的中国风主题样式，页面特有的版式写在下面的 style 里。 -->
+  <link href="styles.css" rel="stylesheet"/>
+  <style>
+    /* 背景水印字改为"评"，呼应主题。 */
+    .eval-page .hero::after { content: "评"; }
+
+    /* 摘要标签：淡朱砂纸签。 */
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .chip {
+      padding: 4px 14px 5px;
+      background: var(--red-wash);
+      color: var(--red-deep);
+      font-family: var(--font-kai);
+      font-size: 15px;
+      letter-spacing: 1px;
+      border: 1px solid rgba(191, 58, 43, .25);
+      border-radius: var(--wobble-sm);
+    }
+    .chip:nth-child(odd) { transform: rotate(-1deg); }
+    .chip:nth-child(even) { transform: rotate(1deg); }
+
+    /* 截图卡片：手绘纸框 + 图注。 */
+    .eval-figure {
+      margin: 0 0 24px;
+      padding: 12px 12px 8px;
+      background: var(--card);
+      border: 2px solid #d9c9a8;
+      border-radius: var(--wobble-sm);
+      box-shadow: 4px 6px 0 rgba(147, 41, 30, .06);
+      transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), box-shadow .35s ease, border-color .35s ease;
+    }
+    .eval-figure:hover { transform: translateY(-5px) rotate(-.4deg); border-color: var(--red); box-shadow: 7px 10px 0 rgba(147, 41, 30, .1); }
+    .eval-figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid rgba(255, 255, 255, .8);
+      border-radius: 8px 4px 9px 5px / 5px 9px 4px 8px;
+    }
+    .eval-figure figcaption {
+      padding: 10px 4px 4px;
+      color: var(--muted);
+      font-family: var(--font-kai);
+      font-size: 15px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .eval-figure figcaption::before { content: "❖ "; color: var(--red); font-size: 12px; }
+
+    /* 图组排版：普通两列，通栏图独占一行。 */
+    .figure-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 26px; }
+    .eval-figure.wide { grid-column: 1 / -1; }
+
+    /* 四端分组标题。 */
+    .role-group { margin-bottom: 34px; scroll-margin-top: 94px; }
+    .role-group:last-child { margin-bottom: 0; }
+    .role-group > h3 { margin-bottom: 18px; padding-bottom: 10px; border-bottom: 1px dashed #dccfae; letter-spacing: 2px; }
+    .role-group > h3::before { content: ""; display: inline-block; width: 9px; height: 9px; margin-right: 11px; background: var(--red); transform: rotate(45deg) translateY(-1px); }
+    .role-group > p { margin-bottom: 18px; }
+
+    /* 概览里的创新点复用主页 references 样式，无需另写。 */
+
+    /* 交错入场：栏目可见后，图卡片依次浮现。 */
+    .eval-page .section.is-visible .eval-figure { animation: rise-sm .55s both; }
+    .eval-page .section.is-visible .eval-figure:nth-child(2) { animation-delay: .1s; }
+    .eval-page .section.is-visible .eval-figure:nth-child(3) { animation-delay: .2s; }
+    .eval-page .section.is-visible .eval-figure:nth-child(4) { animation-delay: .3s; }
+    .eval-page .section.is-visible .role-group { animation: rise-sm .5s .15s both; }
+    .eval-page .section.is-visible .references li { animation: rise-sm .5s both; }
+    .eval-page .section.is-visible .references li:nth-child(1) { animation-delay: .2s; }
+    .eval-page .section.is-visible .references li:nth-child(2) { animation-delay: .28s; }
+    .eval-page .section.is-visible .references li:nth-child(3) { animation-delay: .36s; }
+    .eval-page .section.is-visible .references li:nth-child(4) { animation-delay: .44s; }
+    .eval-page .section.is-visible .references li:nth-child(5) { animation-delay: .52s; }
+    .eval-page .section.is-visible .references li:nth-child(6) { animation-delay: .6s; }
+    .eval-page .section.is-visible .references li:nth-child(7) { animation-delay: .68s; }
+    .eval-page .section.is-visible .references li:nth-child(8) { animation-delay: .76s; }
+
+    @media (max-width: 800px) {
+      .figure-grid { grid-template-columns: 1fr; }
+      .role-group { scroll-margin-top: 110px; }
+    }
+
+    @media print {
+      .site-header, .hero::after { display: none; }
+      .eval-figure { break-inside: avoid; }
+      .section, .hero { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body class="eval-page">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        智能评价 · 项目介绍
+      </a>
+      <nav aria-label="页面导航">
+        <a href="#overview">概览</a>
+        <a href="#flow">业务流程</a>
+        <a href="#ai">智能评价</a>
+        <a href="#roles">四端展示</a>
+        <a href="#deploy">部署</a>
+        <a href="index.html">返回主页</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="container">
+        <div class="hero-top">
+          <div class="hero-copy">
+            <h1>
+              软件实训 · 智能评价系统
+              <span>
+                v2.0.0
+              </span>
+            </h1>
+            <p class="hero-role">
+              以 AI 重塑软件实训评价
+            </p>
+            <p class="hero-school">
+              中国软件杯 2026 · 参赛作品 · 开发文档 v2.0
+            </p>
+            <div class="chips">
+              <span class="chip">四端角色</span>
+              <span class="chip">维度级并行评审</span>
+              <span class="chip">RAG 知识增强</span>
+              <span class="chip">语义指纹查重</span>
+              <span class="chip">校企协同</span>
+              <span class="chip">国产化部署</span>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <figure>
+              <img alt="软件实训智能评价系统登录页截图" height="220" src="assets/work-eval.jpg" width="220"/>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="overview">
+      <div class="container">
+        <header class="section-heading">
+          <h2>系统概览</h2>
+        </header>
+        <div class="section-content">
+          <p>
+            系统面向软件实训教学场景，覆盖「教师布置任务 → 学生提交成果 → AI 维度级评审 →
+            教师复核 → 企业协同评价」全流程。前端为 Vue3 单页应用，按学生、教师、企业、管理员
+            四套角色布局组织页面；后端为 FastAPI 分层服务；数据层支持 SQLite / MySQL /
+            PostgreSQL 多数据库与三级向量存储后端，可按环境平滑切换。
+          </p>
+          <div class="figure-grid" style="margin-top: 24px;">
+            <figure class="eval-figure wide">
+              <img alt="系统总体架构图：前端四端角色布局与后端分层服务" decoding="async" src="assets/eval/arch.png"/>
+              <figcaption>
+                系统总体架构：前后端分离 + 四端角色（图 3-1）
+              </figcaption>
+            </figure>
+          </div>
+          <div class="publication-group" style="margin-top: 10px;">
+            <h3>
+              核心创新
+            </h3>
+            <ol class="references">
+              <li>
+                维度级并行评审：多智能体按评价维度并行打分，自洽性采样、结构化输出与确定性加权聚合，评分轨迹全程留痕。
+              </li>
+              <li>
+                元评审与教师复核：置信度模型加硬触发复核条件，低置信结果自动进入教师复核工作流。
+              </li>
+              <li>
+                RAG 知识增强评价：任务知识库与混合检索机制，把评分标准与课程资料注入评审上下文。
+              </li>
+              <li>
+                文件级语义指纹可信评价：多级匹配检测雷同提交，任务版本隔离，疑似雷同转人工复核。
+              </li>
+              <li>
+                三端 AI 助手：统一 Agent 骨架与意图路由，FunctionCalling 工具循环配四层安全防护。
+              </li>
+              <li>
+                Agentic 练习计划：从薄弱维度出发，Planner-Executor 循环主动出题、批改并留痕。
+              </li>
+              <li>
+                实时进度与用量监控：SSE 事件总线推送评价进度，LLM 用量按功能与模型聚合治理。
+              </li>
+              <li>
+                国产化适配：开发环境、Docker、龙芯离线部署三套环境共用同一套后端代码。
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="flow">
+      <div class="container">
+        <header class="section-heading">
+          <h2>业务流程与角色</h2>
+        </header>
+        <div class="section-content">
+          <p>
+            学生以学号、教师以工号、企业以企业账号、管理员以 admin 登录；密码采用
+            PBKDF2-SHA256 哈希存储，管理员另有三重验证。企业注册后经管理员认证，接受教师发起的
+            课程级邀请，查看脱敏提交并评分，在报告中心查看能力画像。
+          </p>
+          <div class="figure-grid" style="margin-top: 24px;">
+            <figure class="eval-figure wide">
+              <img alt="系统核心业务流程图：登录、提交与评价、企业协同、练习计划" decoding="async" loading="lazy" src="assets/eval/flow.png"/>
+              <figcaption>
+                核心业务流程：提交与评价 / 企业协同 / 练习计划
+              </figcaption>
+            </figure>
+            <figure class="eval-figure wide">
+              <img alt="四角色认证机制示意图：学生、教师、企业、管理员" decoding="async" loading="lazy" src="assets/eval/auth.png"/>
+              <figcaption>
+                四角色认证：学号 / 工号 / 企业账号 / admin
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ai">
+      <div class="container">
+        <header class="section-heading">
+          <h2>AI 智能评价引擎</h2>
+        </header>
+        <div class="section-content">
+          <p>
+            学生创建提交后，后台异步执行评价流水线，按阶段推进并通过事件总线发布进度事件，前端
+            SSE 实时呈现。v2.0 将单次大模型评价升级为维度级并行评审：按评价维度拆分为多个评审
+            智能体并行打分，再经自洽性采样与加权聚合得到最终成绩，全程留痕可回溯。
+          </p>
+          <div class="figure-grid" style="margin-top: 24px;">
+            <figure class="eval-figure wide">
+              <img alt="提交流水线总览图：提交后异步执行的评价阶段与进度事件" decoding="async" loading="lazy" src="assets/eval/pipeline.png"/>
+              <figcaption>
+                提交流水线总览：异步阶段推进 + SSE 进度推送
+              </figcaption>
+            </figure>
+            <figure class="eval-figure wide">
+              <img alt="维度级并行评审编排架构图" decoding="async" loading="lazy" src="assets/eval/review.png"/>
+              <figcaption>
+                维度级并行评审编排架构（v2.0 新增）
+              </figcaption>
+            </figure>
+            <figure class="eval-figure">
+              <img alt="三端 AI 助手统一 Agent 骨架与意图路由示意图" decoding="async" loading="lazy" src="assets/eval/agent.png"/>
+              <figcaption>
+                三端 AI 助手：统一 Agent 骨架与意图路由
+              </figcaption>
+            </figure>
+            <figure class="eval-figure">
+              <img alt="Agentic 练习计划示意图：Planner-Executor 主动辅导循环" decoding="async" loading="lazy" src="assets/eval/planner.png"/>
+              <figcaption>
+                Agentic 练习计划：主动辅导循环
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="roles">
+      <div class="container">
+        <header class="section-heading">
+          <h2>四端功能展示</h2>
+        </header>
+        <div class="section-content">
+          <div class="role-group">
+            <h3>
+              学生端
+            </h3>
+            <p>
+              AI 学习助手按任务辅导、作业改进、代码文档评审等模式提供辅导，可调用工具查询成绩、
+              生成雷达图；评价完成且存在薄弱维度时，助手主动生成练习计划，AI 批改并留痕。
+            </p>
+            <div class="figure-grid">
+              <figure class="eval-figure">
+                <img alt="学生端 AI 学习助手对话界面截图" decoding="async" loading="lazy" src="assets/eval/student-1.png"/>
+                <figcaption>
+                  AI 学习助手：任务辅导 / 成绩查询 / 雷达图
+                </figcaption>
+              </figure>
+              <figure class="eval-figure">
+                <img alt="学生端练习计划界面截图：逐题作答与正确率进度" decoding="async" loading="lazy" src="assets/eval/student-2.png"/>
+                <figcaption>
+                  练习计划：逐题作答 / 薄弱维度收敛
+                </figcaption>
+              </figure>
+              <figure class="eval-figure">
+                <img alt="学生端任务详情界面截图" decoding="async" loading="lazy" src="assets/eval/student-3.png"/>
+                <figcaption>
+                  任务详情与提交
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="role-group">
+            <h3>
+              教师端
+            </h3>
+            <p>
+              AI 洞察中心汇总班级得分矩阵、薄弱学生预警与成长画像；AI 教学助手支持智能出题与
+              批量评语；三栏评阅让提交原文、AI 评审与教师复核同屏对照。
+            </p>
+            <div class="figure-grid">
+              <figure class="eval-figure">
+                <img alt="教师端 AI 洞察中心界面截图：班级得分矩阵与薄弱预警" decoding="async" loading="lazy" src="assets/eval/teacher-1.png"/>
+                <figcaption>
+                  AI 洞察中心：得分矩阵 / 薄弱预警
+                </figcaption>
+              </figure>
+              <figure class="eval-figure">
+                <img alt="教师端 AI 教学助手界面截图：智能出题与批量评语" decoding="async" loading="lazy" src="assets/eval/teacher-2.png"/>
+                <figcaption>
+                  AI 教学助手：智能出题 / 批量评语
+                </figcaption>
+              </figure>
+              <figure class="eval-figure">
+                <img alt="教师端任务中心界面截图" decoding="async" loading="lazy" src="assets/eval/teacher-3.png"/>
+                <figcaption>
+                  任务中心
+                </figcaption>
+              </figure>
+              <figure class="eval-figure">
+                <img alt="教师端三栏评阅界面截图：提交原文、AI 评审与复核对照" decoding="async" loading="lazy" src="assets/eval/teacher-4.png"/>
+                <figcaption>
+                  三栏评阅 / 教师知识库
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="role-group">
+            <h3>
+              企业端
+            </h3>
+            <p>
+              企业上传脱敏项目案例进入模板库供教师参考，双向沟通任务需求；报告中心按任务聚合
+              企业评分维度画像与学生排名，呈现企业视角下的能力表现。
+            </p>
+            <div class="figure-grid">
+              <figure class="eval-figure">
+                <img alt="企业端案例库与反馈界面截图" decoding="async" loading="lazy" src="assets/eval/company-1.png"/>
+                <figcaption>
+                  案例库与双向反馈
+                </figcaption>
+              </figure>
+              <figure class="eval-figure">
+                <img alt="企业端报告中心界面截图：维度画像与学生排名" decoding="async" loading="lazy" src="assets/eval/company-2.png"/>
+                <figcaption>
+                  报告中心：维度画像 / 学生排名
+                </figcaption>
+              </figure>
+              <figure class="eval-figure">
+                <img alt="企业端仪表盘界面截图" decoding="async" loading="lazy" src="assets/eval/company-3.png"/>
+                <figcaption>
+                  企业仪表盘
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="role-group">
+            <h3>
+              管理员端
+            </h3>
+            <p>
+              全局统计与账号管理之外，LLM 用量监控按功能与模型聚合 Token 用量、缓存命中率与调用
+              明细；系统配置热加载让修改即时生效，密钥类配置脱敏展示。
+            </p>
+            <div class="figure-grid">
+              <figure class="eval-figure">
+                <img alt="管理员端 LLM 用量监控界面截图：Token 用量与缓存命中率" decoding="async" loading="lazy" src="assets/eval/admin-1.png"/>
+                <figcaption>
+                  LLM 用量监控：成本治理依据
+                </figcaption>
+              </figure>
+              <figure class="eval-figure">
+                <img alt="管理员端系统配置热加载界面截图" decoding="async" loading="lazy" src="assets/eval/admin-2.png"/>
+                <figcaption>
+                  系统配置热加载：改完即生效
+                </figcaption>
+              </figure>
+              <figure class="eval-figure">
+                <img alt="管理员端全局统计界面截图" decoding="async" loading="lazy" src="assets/eval/admin-3.png"/>
+                <figcaption>
+                  全局统计 / 账号管理
+                </figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="deploy">
+      <div class="container">
+        <header class="section-heading">
+          <h2>系统部署</h2>
+        </header>
+        <div class="section-content">
+          <p>
+            开发环境、Docker 与龙芯离线部署三套环境共用同一套后端代码：开发环境以 SQLite
+            起步、无需安装数据库；Docker 通过 Compose 叠加文件切换多数据库变体，用于标准平台
+            生产；龙芯离线安装包自包含，满足国产化环境要求。
+          </p>
+          <div class="figure-grid" style="margin-top: 24px;">
+            <figure class="eval-figure wide">
+              <img alt="系统部署架构图：开发环境、Docker 与龙芯离线部署" decoding="async" loading="lazy" src="assets/eval/deploy.png"/>
+              <figcaption>
+                部署架构与环境：开发 / Docker / 龙芯离线
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="container footer-inner">
+      <a href="index.html">
+        ← 返回个人主页
+      </a>
+      <a href="https://ffd-p2-blog.netlify.app/" rel="noopener noreferrer" target="_blank">
+        访问线上站点 ↗
+      </a>
+    </div>
+  </footer>
+  <script>
+    // 与主页同一套渐进增强：栏目进入视口后加 .is-visible 触发入场动画。
+    // JS 不可用时页面照常完整显示，只是少了动画。
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          entry.target.classList.add('is-visible')
+          obs.unobserve(entry.target)
+        }
+      },
+      { threshold: 0.12 },
+    )
+    document.querySelectorAll('.eval-page .hero, .eval-page .section').forEach(el => observer.observe(el))
+  </script>
+</body>
+</html>
