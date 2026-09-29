@@ -153,6 +153,9 @@ nav a.is-current::after { transform: translateX(-50%) scale(1.15); }
 h1 { font-size: 54px; font-weight: 600; color: var(--ink); letter-spacing: 4px; margin-bottom: 16px; }
 h1 span { font-size: 30px; font-weight: 400; letter-spacing: 1px; color: var(--gold); margin-left: 18px; }
 .hero-role { display: inline-block; margin-bottom: 12px; font-family: var(--font-kai); font-size: 21px; color: var(--red); }
+/* 政治面貌小字：紧跟姓名下方，五角星点题。 */
+.hero-tribute { margin-bottom: 10px; font-family: var(--font-kai); font-size: 17px; letter-spacing: 4px; color: var(--muted); }
+.hero-tribute::before { content: "★ "; color: var(--red); font-size: 14px; }
 .hero-role::before { content: "「"; color: rgba(191, 58, 43, .45); margin-right: 2px; }
 .hero-role::after { content: "」"; color: rgba(191, 58, 43, .45); margin-left: 2px; }
 .hero-school { color: var(--muted); font-size: 18px; letter-spacing: 1px; }
@@ -421,7 +424,8 @@ footer::before {
    页面照常完整显示，只是少了入场动画（渐进增强）。 */
 .hero.is-visible h1 { animation: rise .6s .05s both; }
 .hero.is-visible h1 span { animation: rise .6s .16s both; }
-.hero.is-visible .hero-role { animation: rise .6s .26s both; }
+.hero.is-visible .hero-tribute { animation: rise .6s .22s both; }
+.hero.is-visible .hero-role { animation: rise .6s .28s both; }
 .hero.is-visible .hero-school { animation: rise .6s .34s both; }
 .hero.is-visible .hero-visual figure { animation: rise .65s .2s both; }
 .hero.is-visible::after { animation: wash-in 1.4s .25s both; }
