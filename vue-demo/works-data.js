@@ -1,27 +1,16 @@
 // 第 5 课：每个对象代表一个作品，四个字段分别负责标题、说明、图片、网址。
+// 数据与主页 works-data.js 保持一致，只是这里没有 year / tags 两个字段。
 const works = [
   {
-    "title": "长风成卷 · 博客应用",
-    "description": "文章展示、接口与数据库。",
-    "image": "assets/work-blog.png",
+    "title": "软件实训 · 智能评价系统",
+    "description": "AI 驱动的实训评价登录页。",
+    "image": "assets/work-eval.jpg",
     "url": "https://ffd-p2-blog.netlify.app/"
   },
   {
-    "title": "群像云图 · 社区应用",
-    "description": "内容发布与社区互动。",
-    "image": "assets/work-community.png",
+    "title": "HotspotInsight · 热榜洞察",
+    "description": "技术、行业、品牌热点的搜索门户。",
+    "image": "assets/work-hotspot.png",
     "url": "https://ffd-p3-community.netlify.app/"
-  },
-  {
-    "title": "一笺心意 · 祝福卡片",
-    "description": "卡片制作与作品分享。",
-    "image": "assets/work-greeting-card.png",
-    "url": "https://ffd-p4-greeting-card.netlify.app/"
-  },
-  {
-    "title": "星声音乐站 · 音乐应用",
-    "description": "网页音频与交互实践。",
-    "image": "assets/work-music-station.png",
-    "url": "https://ffd-p5-music-station.netlify.app/"
   }
 ];

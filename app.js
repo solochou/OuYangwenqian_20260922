@@ -21,6 +21,7 @@ const progressBar = document.querySelector('#reading-progress')
 const indicator = document.querySelector('#section-indicator')
 const toTopButton = document.querySelector('#to-top')
 const navLinks = document.querySelectorAll('nav a')
+const header = document.querySelector('.site-header')
 
 // 页面上所有栏目。hero 是首屏，section 是其余栏目，两类都要。
 const sections = document.querySelectorAll('main .hero[id], main section[id]')
@@ -95,14 +96,22 @@ toTopButton.addEventListener('click', () => {
   showCurrent('#about')
 })
 
-// ============ 滚动时要做两件事，合成一个监听器 ============
-// 为什么不写两个 addEventListener('scroll')？可以，但滚动一秒能触发几十次，
-// 监听器越少越好。这里一次滚动做两件事：更新进度条、决定按钮显不显示。
+// 顶栏滚动状态：滚过 24px 就给 header 加上 is-scrolled。
+// 阴影、边框、品牌色怎么变，全部写在 CSS 的 .site-header.is-scrolled 里，JS 只管加不加类名。
+function updateHeaderState() {
+  if (!header) return
+  header.classList.toggle('is-scrolled', window.scrollY > 24)
+}
+
+// ============ 滚动时要做三件事，合成一个监听器 ============
+// 为什么不写三个 addEventListener('scroll')？可以，但滚动一秒能触发几十次，
+// 监听器越少越好。这里一次滚动做三件事：更新进度条、决定按钮显不显示、切换顶栏状态。
 window.addEventListener('scroll', () => {
   updateProgress() // TODO 01
   // TODO 05 的另一半：滚过大半屏才显示按钮。
   // 用 innerHeight * 0.6 而不是写死 500px——手机屏和电脑屏高度差很多。
   toTopButton.classList.toggle('is-visible', window.scrollY > window.innerHeight * 0.6)
+  updateHeaderState()
 })
 
 // 首屏也要算一次，否则刷新页面时进度条是 0，但其实已经滚在中间了

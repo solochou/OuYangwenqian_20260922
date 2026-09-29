@@ -76,7 +76,7 @@ function renderWorks() {
     empty.textContent = '这个标签下还没有作品。'
     fragment.append(empty)
   } else {
-    // forEach 逐条处理。四条数据 → 四张卡片，代码只写一遍。
+    // forEach 逐条处理。数据有几条就渲染几张卡片，代码只写一遍。
     items.forEach(work => fragment.append(createWorkCard(work)))
   }
 

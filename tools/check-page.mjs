@@ -32,10 +32,10 @@ if (!fs.existsSync(htmlPath)) {
 const html = fs.readFileSync(htmlPath, 'utf8');
 
 console.log('\n== 2. index.html 引用的本地文件 ==');
-// 取出所有 href/src，跳过 http(s)、data:、mailto: 和页内锚点
+// 取出所有 href/src，跳过 http(s)、data:、mailto:、tel: 和页内锚点
 const refs = [...html.matchAll(/(?:href|src)="([^"]+)"/g)]
   .map((m) => m[1])
-  .filter((v) => !/^(https?:|data:|mailto:|#|\/\/)/.test(v));
+  .filter((v) => !/^(https?:|data:|mailto:|tel:|#|\/\/)/.test(v));
 
 for (const ref of [...new Set(refs)]) {
   const target = path.join(root, ref.split('?')[0].split('#')[0]);

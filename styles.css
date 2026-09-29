@@ -48,9 +48,11 @@ h3 { font-size: 22px; font-weight: 600; color: var(--subheading); }
 .skip-link:focus { top: 12px; }
 
 /* 2. 顶部只保留姓名和普通锚点导航。 */
-.site-header { position: sticky; top: 0; z-index: 10; background: #fbfaf6f5; backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.site-header { position: sticky; top: 0; z-index: 10; background: #fbfaf6f5; backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); transition: box-shadow .25s ease, border-color .25s ease, background-color .25s ease; }
+.site-header.is-scrolled { background: #fbfaf6ee; border-bottom-color: #d8d3c5; box-shadow: 0 6px 20px rgba(52, 67, 56, 0.06); }
 .header-inner { display: flex; justify-content: space-between; align-items: center; gap: 30px; min-height: 70px; }
-.brand { font-size: 24px; font-weight: 600; color: var(--text); white-space: nowrap; }
+.brand { font-size: 24px; font-weight: 600; color: var(--text); white-space: nowrap; transition: color .2s ease; }
+.site-header.is-scrolled .brand { color: var(--heading); }
 .brand span { font-size: 14px; font-weight: 400; letter-spacing: 1px; margin-left: 12px; color: var(--muted); }
 nav { display: flex; gap: 28px; }
 nav a { color: var(--muted); font-size: 17px; }
@@ -105,9 +107,10 @@ h1 span { font-size: 32px; font-weight: 400; letter-spacing: 0; color: var(--sub
 .work-card > a:hover { text-decoration: none; transform: translateY(-4px); border-color: #b7a88d; box-shadow: 0 14px 30px #34433810; }
 .work-card > a:focus-visible { outline-offset: 5px; }
 .work-cover { background: #e5e0d1; padding: 24px; overflow: hidden; }
-.work-community .work-cover { background: #dbe5dc; }
+.work-community .work-cover { background: #dce6ee; }
 .work-greeting-card .work-cover { background: #ece0d9; }
 .work-music-station .work-cover { background: #dfe3e7; }
+.work-blog .work-cover { background: #d8e0d6; }
 .work-cover img { display: block; width: 100%; height: auto; aspect-ratio: 1.65; object-fit: cover; object-position: top; border: 1px solid #ffffffb3; border-radius: 3px; box-shadow: 0 8px 20px #2b393614; transition: transform .4s ease; }
 .work-card > a:hover img { transform: scale(1.018); }
 .work-copy { position: relative; padding: 19px 26px 22px; }
